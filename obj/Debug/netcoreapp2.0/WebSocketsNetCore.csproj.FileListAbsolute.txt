@@ -1,0 +1,10 @@
+C:\Users\adria\Desktop\WebSocketsNetCore\obj\Debug\netcoreapp2.0\WebSocketsNetCore.csproj.CoreCompileInputs.cache
+C:\Users\adria\Desktop\WebSocketsNetCore\obj\Debug\netcoreapp2.0\WebSocketsNetCore.AssemblyInfoInputs.cache
+C:\Users\adria\Desktop\WebSocketsNetCore\obj\Debug\netcoreapp2.0\WebSocketsNetCore.AssemblyInfo.cs
+C:\Users\adria\Desktop\WebSocketsNetCore\bin\Debug\netcoreapp2.0\WebSocketsNetCore.deps.json
+C:\Users\adria\Desktop\WebSocketsNetCore\bin\Debug\netcoreapp2.0\WebSocketsNetCore.runtimeconfig.json
+C:\Users\adria\Desktop\WebSocketsNetCore\bin\Debug\netcoreapp2.0\WebSocketsNetCore.runtimeconfig.dev.json
+C:\Users\adria\Desktop\WebSocketsNetCore\bin\Debug\netcoreapp2.0\WebSocketsNetCore.dll
+C:\Users\adria\Desktop\WebSocketsNetCore\bin\Debug\netcoreapp2.0\WebSocketsNetCore.pdb
+C:\Users\adria\Desktop\WebSocketsNetCore\obj\Debug\netcoreapp2.0\WebSocketsNetCore.dll
+C:\Users\adria\Desktop\WebSocketsNetCore\obj\Debug\netcoreapp2.0\WebSocketsNetCore.pdb
