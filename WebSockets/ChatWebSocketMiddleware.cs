@@ -8,6 +8,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft;
 
 namespace WebSockets
 {
@@ -34,13 +35,15 @@ namespace WebSockets
 
                 CancellationToken ct = context.RequestAborted;
                 WebSocket currentSocket = await context.WebSockets.AcceptWebSocketAsync();
-                var socketId = Guid.NewGuid();
-
-                _sockets.TryAdd(new UserSocket
+                Guid socketId = Guid.NewGuid();
+                UserSocket user = new UserSocket
                 {
                     Id = socketId,
-                    Nome = "eu"
-                }, currentSocket);
+                    Nome = context.Request.Query["username"]
+                };
+                _sockets.TryAdd(user, currentSocket);
+
+                AtualizarLista(user, ct, TipoMensagem.ListaUsuarios);
 
                 while (true)
                 {
@@ -54,26 +57,39 @@ namespace WebSockets
                     {
                         if (currentSocket.State != WebSocketState.Open)
                         {
+                            if (_sockets.Keys.Any(x => x.Id == socketId))
+                            {
+                                WebSocket dummy;
+                                _sockets.TryRemove(user, out dummy);
+                                AtualizarLista(user, ct, TipoMensagem.Sair);
+                            }
                             break;
                         }
 
                         continue;
                     }
 
-                    foreach (var socket in _sockets)
+                    SendAllSockets(Newtonsoft.Json.JsonConvert.SerializeObject(new
                     {
-                        if (socket.Value.State != WebSocketState.Open)
-                        {                           
-                            continue;
-                        }
-
-                        await SendStringAsync(socket.Value, response, ct);
-                    }
+                        Tipo = TipoMensagem.Mensagem.ToString(),
+                        user.Id,
+                        user.Nome,
+                        Mensagem = response
+                    }), ct);
                 }
 
-                WebSocket dummy;
-                if (_sockets.Keys.Any(x=>x.Id== socketId))
-                    _sockets.TryRemove(_sockets.Keys.SingleOrDefault(x => x.Id == socketId), out dummy);
+
+                //if (_sockets.Keys.Any(x => x.Id == socketId))
+                //{
+                //    WebSocket dummy;
+                //    UserSocket userExit = _sockets.Keys.SingleOrDefault(x => x.Id == socketId);
+                //    _sockets.TryRemove(userExit, out dummy);
+                //    SendAllSockets(Newtonsoft.Json.JsonConvert.SerializeObject(new
+                //    {
+                //        Tipo = TipoMensagem.Sair.ToString(),
+                //        user = userExit
+                //    }), ct);
+                //}
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
                 currentSocket.Dispose();
@@ -83,6 +99,32 @@ namespace WebSockets
                 await _next.Invoke(context);
                 return;
             }
+        }
+        private void AtualizarLista(UserSocket user, CancellationToken ct, TipoMensagem tipo)
+        {
+            string[] listaNomes =
+                    _sockets.Where(x => x.Value.State == WebSocketState.Open)
+                    .Select(x => x.Key.Nome)
+                    .ToArray();
+
+            SendAllSockets(Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                Tipo = tipo.ToString(),
+                Lista = listaNomes,
+                User = user
+            }), ct);
+        }
+
+        private async void SendAllSockets(string data, CancellationToken ct)
+        {
+            foreach (var socket in _sockets)
+            {
+                if (socket.Value.State != WebSocketState.Open)
+                    continue;
+
+                await SendStringAsync(socket.Value, data, ct);
+            }
+
         }
 
         private static Task SendStringAsync(WebSocket socket, string data, CancellationToken ct = default(CancellationToken))
@@ -125,7 +167,12 @@ namespace WebSockets
     {
         public Guid Id { get; set; }
         public string Nome { get; set; }
-
+    }
+    public enum TipoMensagem
+    {
+        ListaUsuarios,
+        Mensagem,
+        Sair
 
     }
 }

@@ -2,31 +2,48 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+
+<div class="container" id="panelName">
+    <div class="row">
+        <div class="col-lg-12">
+            <div style="height:20px;bottom:10px;left:0; display:block;width:100%">
+                <input type="text" style="max-width:unset;width:100%;max-width:100%" id="InputName" placeholder="Seu nome" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row panelChat" style="display:none;">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4" style="background: cadetblue;">
+        <h5>Lista de amigos</h5>
+        <div id="lista"></div>
+    </div>
+    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-8" id="msgs">
+
+    </div>
+</div>
+
+<div class="inputText panelChat" style="display:none;">
+    <input type="text" style="max-width:unset;width:100%;max-width:100%" id="MessageField" placeholder="Digite sua mensagem aqui" />
+</div>
 <style>
-    body {
-        margin: 0px;
-        padding: 0px;
+    .nome {
+        font-style: italic;
+        font-weight: 800;
     }
 
-    .msg {
-        position: absolute;
-        top: 0;
-        bottom: 30px;
-        border: 1px solid green;
-        margin-bottom: auto;
+    .inputText {
+        position: fixed;
+        bottom: 0px;
+        right: 0px;
+        height: 20px;
+        bottom: 10px;
+        left: 0;
         display: block;
-        overflow: scroll;
-        width: 100%;
-        white-space: nowrap;
+        width: 100%
     }
 </style>
-<div class="msg">
-    <div style="position:absolute; bottom:0;" id="msgs"></div>
-</div>
-
-<div style="position:absolute;height:20px;bottom:10px;left:0; display:block;width:100%">
-    <input type="text" style="max-width:unset;width:100%;max-width:100%" id="MessageField" placeholder="type message and press enter" />
-</div>
 
 @section Scripts {
     <script src="~/js/Chat.js"></script>
