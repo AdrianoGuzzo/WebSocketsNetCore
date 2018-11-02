@@ -49,40 +49,21 @@ namespace WebSocketsNetCore
                     template: "{controller=Chat}/{action=Index}/{id?}");
             });
 
+            
+            app.UseStaticFiles();
+
+            app.UseFileServer();
+
+            //Configuração WebSocket
             WebSocketOptions webSocketsOptions = new WebSocketOptions()
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(20),
                 ReceiveBufferSize = 6 * 1024
             };
-            app.UseStaticFiles();
-
-            app.UseFileServer();
-
 
             app.UseWebSockets(webSocketsOptions);
-            app.UseMiddleware<ChatWebSocketMiddleware>();
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path == "/ws")
-                {
-                    if (context.WebSockets.IsWebSocketRequest)
-                    {
-                        WebSocket socket = await context.WebSockets.AcceptWebSocketAsync();
-                        await PingRequest(context, socket);
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = 400;
-                    }
-                }
-                else
-                {
-                    await next();
-                }
-            });
-            
-
-            
+            //Implementaçao do chat em Websocket
+            app.UseMiddleware<ChatWebSocketMiddleware>();     
         }
         private async Task PingRequest(HttpContext context, WebSocket socket)
         {

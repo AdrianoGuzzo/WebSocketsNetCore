@@ -14,6 +14,7 @@ namespace WebSockets
 {
     public class ChatWebSocketMiddleware
     {
+        //Lista de conexões
         private static ConcurrentDictionary<UserSocket, WebSocket> _sockets = new ConcurrentDictionary<UserSocket, WebSocket>();
 
         private readonly RequestDelegate _next;
@@ -35,6 +36,7 @@ namespace WebSockets
 
                 CancellationToken ct = context.RequestAborted;
                 WebSocket currentSocket = await context.WebSockets.AcceptWebSocketAsync();
+                
                 Guid socketId = Guid.NewGuid();
                 UserSocket user = new UserSocket
                 {
@@ -65,7 +67,6 @@ namespace WebSockets
                             }
                             break;
                         }
-
                         continue;
                     }
 
@@ -77,19 +78,6 @@ namespace WebSockets
                         Mensagem = response
                     }), ct);
                 }
-
-
-                //if (_sockets.Keys.Any(x => x.Id == socketId))
-                //{
-                //    WebSocket dummy;
-                //    UserSocket userExit = _sockets.Keys.SingleOrDefault(x => x.Id == socketId);
-                //    _sockets.TryRemove(userExit, out dummy);
-                //    SendAllSockets(Newtonsoft.Json.JsonConvert.SerializeObject(new
-                //    {
-                //        Tipo = TipoMensagem.Sair.ToString(),
-                //        user = userExit
-                //    }), ct);
-                //}
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
                 currentSocket.Dispose();
